@@ -110,6 +110,7 @@ export function modelViewRemove(model) {
  * @param {Object} data Additional information about the change.
  * @param {module:engine/conversion/downcastdispatcher~DowncastConversionApi} conversionApi Conversion interface.
  */
+<<<<<<< Updated upstream
 export function modelViewChangeType(evt, data, conversionApi) {
   if (!conversionApi.consumable.consume(data.item, 'attribute:listType')) {
     return;
@@ -128,6 +129,27 @@ export function modelViewChangeType(evt, data, conversionApi) {
   const viewList = viewItem.parent;
   const listName = data.attributeNewValue === 'numbered' || data.attributeNewValue === 'lettered' ? 'ol' : 'ul';
   viewWriter.rename(listName, viewList);
+=======
+export function modelViewChangeType( evt, data, conversionApi ) {
+	if ( !conversionApi.consumable.consume( data.item, 'attribute:listType' ) ) {
+		return;
+	}
+
+	const viewItem = conversionApi.mapper.toViewElement( data.item );
+	const viewWriter = conversionApi.writer;
+
+	// Break the container after and before the list item.
+	// This will create a view list with one view list item -- the one that changed type.
+	viewWriter.breakContainer( viewWriter.createPositionBefore( viewItem ) );
+	viewWriter.breakContainer( viewWriter.createPositionAfter( viewItem ) );
+
+	// Change name of the view list that holds the changed view item.
+	// We cannot just change name property, because that would not render properly.
+	const viewList = viewItem.parent;
+	const listName = data.attributeNewValue === 'numbered' || data.attributeNewValue === 'lettered' ? 'ol' : 'ul';
+
+	viewWriter.rename( listName, viewList );
+>>>>>>> Stashed changes
 }
 
 /**
@@ -139,6 +161,7 @@ export function modelViewChangeType(evt, data, conversionApi) {
  * @param {Object} data Additional information about the change.
  * @param {module:engine/conversion/downcastdispatcher~DowncastConversionApi} conversionApi Conversion interface.
  */
+<<<<<<< Updated upstream
 export function modelViewMergeAfterChangeType(evt, data, conversionApi) {
   const viewItem = conversionApi.mapper.toViewElement(data.item);
   const viewList = viewItem.parent;
@@ -147,6 +170,16 @@ export function modelViewMergeAfterChangeType(evt, data, conversionApi) {
   // Merge the changed view list with other lists, if possible.
   mergeViewLists(viewWriter, viewList, viewList.nextSibling);
   mergeViewLists(viewWriter, viewList.previousSibling, viewList);
+=======
+export function modelViewMergeAfterChangeType( evt, data, conversionApi ) {
+	const viewItem = conversionApi.mapper.toViewElement( data.item );
+	const viewList = viewItem.parent;
+	const viewWriter = conversionApi.writer;
+
+	// Merge the changed view list with other lists, if possible.
+	mergeViewLists( viewWriter, viewList, viewList.nextSibling );
+	mergeViewLists( viewWriter, viewList.previousSibling, viewList );
+>>>>>>> Stashed changes
 
   let listStyle = null;
   let listType = null;
@@ -179,10 +212,17 @@ export function modelViewMergeAfterChangeType(evt, data, conversionApi) {
     viewWriter.setAttribute('listType', data.attributeNewValue, cursor);
   }
 
+<<<<<<< Updated upstream
   // Consumable insertion of children inside the item. They are already handled by re-building the item in view.
   for (const child of data.item.getChildren()) {
     conversionApi.consumable.consume(child, 'insert');
   }
+=======
+	// Consumable insertion of children inside the item. They are already handled by re-building the item in view.
+	for ( const child of data.item.getChildren() ) {
+		conversionApi.consumable.consume( child, 'insert' );
+	}
+>>>>>>> Stashed changes
 }
 
 /**
@@ -403,6 +443,7 @@ export function modelViewMergeAfter(evt, data, conversionApi) {
  * @param {module:engine/conversion/upcastdispatcher~UpcastConversionApi} conversionApi
  * Conversion interface to be used by the callback.
  */
+<<<<<<< Updated upstream
 export function viewModelConverter(evt, data, conversionApi) {
   if (conversionApi.consumable.consume(data.viewItem, { name: true })) {
     const writer = conversionApi.writer;
@@ -416,6 +457,21 @@ export function viewModelConverter(evt, data, conversionApi) {
     writer.setAttribute('listIndent', conversionStore.indent, listItem);
 
     // Set 'bulleted' as default. If this item is pasted into a context,
+=======
+export function viewModelConverter( evt, data, conversionApi ) {
+	if ( conversionApi.consumable.consume( data.viewItem, { name: true } ) ) {
+		const writer = conversionApi.writer;
+
+		// 1. Create `listItem` model element.
+		const listItem = writer.createElement( 'listItem' );
+
+		// 2. Handle `listItem` model element attributes.
+		const indent = getIndent( data.viewItem );
+
+		writer.setAttribute( 'listIndent', indent, listItem );
+
+		// Set 'bulleted' as default. If this item is pasted into a context,
+>>>>>>> Stashed changes
     let type = 'bulleted';
 
     if (data.viewItem.parent && data.viewItem.parent.name === 'ol') {
@@ -431,9 +487,12 @@ export function viewModelConverter(evt, data, conversionApi) {
 
     writer.setAttribute('listType', type, listItem);
 
+<<<<<<< Updated upstream
     // `listItem`s created recursively should have bigger indent.
     conversionStore.indent++;
 
+=======
+>>>>>>> Stashed changes
     // Try to find allowed parent for list item.
     const splitResult = conversionApi.splitToAllowedParent(listItem, data.modelCursor);
 
@@ -443,6 +502,7 @@ export function viewModelConverter(evt, data, conversionApi) {
       return;
     }
 
+<<<<<<< Updated upstream
     writer.insert(listItem, splitResult.position);
 
     const nextPosition = viewToModelListItemChildrenConverter(listItem,
@@ -462,6 +522,24 @@ export function viewModelConverter(evt, data, conversionApi) {
       data.modelCursor = data.modelRange.end;
     }
   }
+=======
+		writer.insert( listItem, splitResult.position );
+
+		const nextPosition = viewToModelListItemChildrenConverter( listItem, data.viewItem.getChildren(), conversionApi );
+
+		// Result range starts before the first item and ends after the last.
+		data.modelRange = writer.createRange( data.modelCursor, nextPosition );
+
+		// When `data.modelCursor` parent had to be split to insert list item...
+		if ( splitResult.cursorParent ) {
+			// Continue conversion in the split element.
+			data.modelCursor = writer.createPositionAt( splitResult.cursorParent, 0 );
+		} else {
+			// Otherwise continue conversion after the last list item.
+			data.modelCursor = data.modelRange.end;
+		}
+	}
+>>>>>>> Stashed changes
 }
 
 /**

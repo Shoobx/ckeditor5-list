@@ -34,6 +34,7 @@ export function createViewListItemElement(writer) {
  * @param {module:engine/conversion/upcastdispatcher~UpcastConversionApi} conversionApi Conversion interface.
  * @returns {module:engine/view/containerelement~ContainerElement} View list element.
  */
+<<<<<<< Updated upstream
 export function generateLiInUl(modelItem, conversionApi) {
   const mapper = conversionApi.mapper;
   const viewWriter = conversionApi.writer;
@@ -56,6 +57,30 @@ export function generateLiInUl(modelItem, conversionApi) {
   mapper.bindElements(modelItem, viewItem);
 
   return viewItem;
+=======
+export function generateLiInUl( modelItem, conversionApi ) {
+	const mapper = conversionApi.mapper;
+	  const viewWriter = conversionApi.writer;
+	  const listType = modelItem.getAttribute('listType') === 'numbered' ||
+	    modelItem.getAttribute('listType') === 'lettered' ? 'ol' : 'ul';
+	  let listStyle = null;
+
+	  if (modelItem.getAttribute('listType') === 'numbered') {
+	    listStyle = { 'style': 'list-style: decimal', 'type': '1' };
+	  } else if (modelItem.getAttribute('listType') === 'lettered') {
+	    listStyle = { 'style': 'list-style: lower-alpha', 'type': 'a' };
+	  } else {
+	    listStyle = null;
+	  }
+	  const viewItem = createViewListItemElement(viewWriter);
+	  const viewList = viewWriter.createContainerElement(listType, listStyle);
+
+	  viewWriter.insert(viewWriter.createPositionAt(viewList, 0), viewItem);
+
+	  mapper.bindElements(modelItem, viewItem);
+
+	  return viewItem;
+>>>>>>> Stashed changes
 }
 
 /**
@@ -71,6 +96,7 @@ export function generateLiInUl(modelItem, conversionApi) {
  * @param {module:engine/model/model~Model} model The model instance.
  * @param isInsert is injection an insertion
  */
+<<<<<<< Updated upstream
 export function injectViewList(modelItem, injectedItem, conversionApi, model) {
   const injectedList = injectedItem.parent;
   const mapper = conversionApi.mapper;
@@ -164,6 +190,99 @@ export function injectViewList(modelItem, injectedItem, conversionApi, model) {
   // Merge the inserted view list with its possible neighbor lists.
   mergeViewLists(viewWriter, injectedList, injectedList.nextSibling);
   mergeViewLists(viewWriter, injectedList.previousSibling, injectedList);
+=======
+export function injectViewList( modelItem, injectedItem, conversionApi, model ) {
+	const injectedList = injectedItem.parent;
+	const mapper = conversionApi.mapper;
+	const viewWriter = conversionApi.writer;
+
+	// The position where the view list will be inserted.
+	let insertPosition = mapper.toViewPosition( model.createPositionBefore( modelItem ) );
+
+	// 1. Find the previous list item that has the same or smaller indent. Basically we are looking for the first model item
+	// that is a "parent" or "sibling" of the injected model item.
+	// If there is no such list item, it means that the injected list item is the first item in "its list".
+	const refItem = getSiblingListItem( modelItem.previousSibling, {
+		sameIndent: true,
+		smallerIndent: true,
+		listIndent: modelItem.getAttribute( 'listIndent' )
+	} );
+	const prevItem = modelItem.previousSibling;
+
+	if ( refItem && refItem.getAttribute( 'listIndent' ) == modelItem.getAttribute( 'listIndent' ) ) {
+		// There is a list item with the same indent - we found the same-level sibling.
+		// Break the list after it. The inserted view item will be added in the broken space.
+		const viewItem = mapper.toViewElement( refItem );
+		insertPosition = viewWriter.breakContainer( viewWriter.createPositionAfter( viewItem ) );
+		if (refItem.getAttribute('listType') !== modelItem.getAttribute('listType')) {
+	      const brElement = viewWriter.createEmptyElement('paragraph');
+	      viewWriter.insert(insertPosition, brElement);
+	      insertPosition = viewWriter.createPositionAfter(brElement);
+	    }
+	} else {
+		// There is no list item with the same indent. Check the previous model item.
+		if ( prevItem && prevItem.name == 'listItem' ) {
+			// If it is a list item, it has to have a lower indent.
+			// It means that the inserted item should be added to it as its nested item.
+			insertPosition = mapper.toViewPosition( model.createPositionAt( prevItem, 'end' ) );
+		} else {
+			// The previous item is not a list item (or does not exist at all).
+			// Just map the position and insert the view item at the mapped position.
+			insertPosition = mapper.toViewPosition( model.createPositionBefore( modelItem ) );
+		}
+	}
+
+	insertPosition = positionAfterUiElements( insertPosition );
+
+	// Insert the view item.
+	viewWriter.insert( insertPosition, injectedList );
+
+	// 2. Handle possible children of the injected model item.
+	if ( prevItem && prevItem.name == 'listItem' ) {
+		const prevView = mapper.toViewElement( prevItem );
+
+		const walkerBoundaries = viewWriter.createRange( viewWriter.createPositionAt( prevView, 0 ), insertPosition );
+		const walker = walkerBoundaries.getWalker( { ignoreElementEnd: true } );
+
+		for ( const value of walker ) {
+			if ( value.item.is( 'li' ) ) {
+				const breakPosition = viewWriter.breakContainer( viewWriter.createPositionBefore( value.item ) );
+				const viewList = value.item.parent;
+
+				const targetPosition = viewWriter.createPositionAt( injectedItem, 'end' );
+				mergeViewLists( viewWriter, targetPosition.nodeBefore, targetPosition.nodeAfter );
+				viewWriter.move( viewWriter.createRangeOn( viewList ), targetPosition );
+
+				walker.position = breakPosition;
+			}
+		}
+	} else {
+		const nextViewList = injectedList.nextSibling;
+
+		if ( nextViewList && ( nextViewList.is( 'ul' ) || nextViewList.is( 'ol' ) ) ) {
+			let lastSubChild = null;
+
+			for ( const child of nextViewList.getChildren() ) {
+				const modelChild = mapper.toModelElement( child );
+
+				if ( modelChild && modelChild.getAttribute( 'listIndent' ) > modelItem.getAttribute( 'listIndent' ) ) {
+					lastSubChild = child;
+				} else {
+					break;
+				}
+			}
+
+			if ( lastSubChild ) {
+				viewWriter.breakContainer( viewWriter.createPositionAfter( lastSubChild ) );
+				viewWriter.move( viewWriter.createRangeOn( lastSubChild.parent ), viewWriter.createPositionAt( injectedItem, 'end' ) );
+			}
+		}
+	}
+
+	// Merge the inserted view list with its possible neighbor lists.
+	mergeViewLists( viewWriter, injectedList, injectedList.nextSibling );
+	mergeViewLists( viewWriter, injectedList.previousSibling, injectedList );
+>>>>>>> Stashed changes
 }
 
 /**
@@ -175,6 +294,7 @@ export function injectViewList(modelItem, injectedItem, conversionApi, model) {
  * @param {module:engine/view/item~Item} secondList The second element to compare.
  * @returns {module:engine/view/position~Position|null} The position after merge or `null` when there was no merge.
  */
+<<<<<<< Updated upstream
 export function mergeViewLists(viewWriter, firstList, secondList) {
   // Check if two lists are going to be merged.
   if (!firstList || !secondList || firstList.name !== 'ul' && firstList.name !== 'ol') {
@@ -187,6 +307,20 @@ export function mergeViewLists(viewWriter, firstList, secondList) {
   }
 
   return viewWriter.mergeContainers(viewWriter.createPositionAfter(firstList));
+=======
+export function mergeViewLists( viewWriter, firstList, secondList ) {
+	// Check if two lists are going to be merged.
+	if ( !firstList || !secondList || ( firstList.name != 'ul' && firstList.name != 'ol' ) ) {
+		return null;
+	}
+
+	// Both parameters are list elements, so compare types now.
+	if (firstList.name !== secondList.name || firstList.getAttribute('type') !== secondList.getAttribute('type')) {
+		return null;
+	}
+
+	return viewWriter.mergeContainers( viewWriter.createPositionAfter( firstList ) );
+>>>>>>> Stashed changes
 }
 
 /**
