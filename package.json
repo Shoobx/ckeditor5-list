@@ -14,7 +14,8 @@
     "@ckeditor/ckeditor5-engine": "^14.0.0",
     "@ckeditor/ckeditor5-paragraph": "^11.0.5",
     "@ckeditor/ckeditor5-ui": "^14.0.0",
-    "@ckeditor/ckeditor5-utils": "^14.0.0"
+    "@ckeditor/ckeditor5-utils": "^14.0.0",
+    "svg2ttf": "^4.3.0"
   },
   "devDependencies": {
     "@ckeditor/ckeditor5-basic-styles": "^11.1.4",
