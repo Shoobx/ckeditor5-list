@@ -10,8 +10,9 @@
 import { createUIComponent } from './utils';
 
 import numberedListIcon from '../theme/icons/numberedlist.svg';
-import bulletedListIcon from '../theme/icons/bulletedlist.svg';
+import bulletListIcon from '../theme/icons/bulletedlist.svg';
 import alphaListIcon from '../theme/icons/alphalist.svg';
+import romanListIcon from '../theme/icons/romanlist.svg';
 
 
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
@@ -22,7 +23,7 @@ import {
 
 
 /**
- * The list UI feature. It introduces the `'numberedList'` and `'bulletedList'` buttons that
+ * The list UI feature. It introduces the `'numberedList'` and `'bulletList'` buttons that
  * allow to convert paragraphs to and from list items and indent or outdent them.
  *
  * @extends module:core/plugin~Plugin
@@ -34,13 +35,14 @@ export default class ListUI extends Plugin {
 	init() {
 		const editor = this.editor;
 	    const componentFactory = editor.ui.componentFactory;
-	    const options = ['numberedList', 'letteredList', 'bulletedList'];
+	    const options = ['numberedList', 'letteredList', 'romanList', 'bulletList'];
 		const t = this.editor.t;
 
-		// Create two buttons and link them with numberedList and bulletedList commands.
+		// Create two buttons and link them with numberedList and bulletList commands.
 	    createUIComponent(this.editor, 'numberedList', t('Number List'), numberedListIcon);
 	    createUIComponent(this.editor, 'letteredList', t('Alpha List'), alphaListIcon);
-	    createUIComponent(this.editor, 'bulletedList', t('Bullet List'), bulletedListIcon);
+	    createUIComponent(this.editor, 'romanList', t('Roman List'), romanListIcon);
+	    createUIComponent(this.editor, 'bulletList', t('Bullet List'), bulletListIcon);
 
 	    componentFactory.add('listStyle', locale => {
 			const dropdownView = createDropdown(locale);
@@ -50,7 +52,7 @@ export default class ListUI extends Plugin {
 
 			// Configure dropdown properties an behavior.
 			dropdownView.buttonView.set({
-				icon: bulletedListIcon,
+				icon: bulletListIcon,
 				withText: false,
 				tooltip: false,
 			});

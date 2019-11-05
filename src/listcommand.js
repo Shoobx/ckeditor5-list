@@ -20,7 +20,7 @@ export default class ListCommand extends Command {
 	 * Creates an instance of the command.
 	 *
 	 * @param {module:core/editor/editor~Editor} editor The editor instance.
-	 * @param {'numbered'|'bulleted'} type List type that will be handled by this command.
+	 * @param {'numbered'|'bullet'} type List type that will be handled by this command.
 	 */
 	constructor( editor, type ) {
 		super( editor );
@@ -29,7 +29,7 @@ export default class ListCommand extends Command {
 		 * The type of the list created by the command.
 		 *
 		 * @readonly
-		 * @member {'numbered'|'bulleted'|'todo'}
+		 * @member {'numbered'|'bullet'|'todo'}
 		 */
 		this.type = type;
 

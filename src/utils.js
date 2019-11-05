@@ -36,15 +36,19 @@ export function createViewListItemElement( writer ) {
 export function generateLiInUl( modelItem, conversionApi ) {
 	const mapper = conversionApi.mapper;
 	const viewWriter = conversionApi.writer;
-	const listType = modelItem.getAttribute('listType') === 'numbered' || modelItem.getAttribute('listType') === 'lettered' ? 'ol' : 'ul';
+	const listType = modelItem.getAttribute('listType') === 'numbered' ||
+    modelItem.getAttribute('listType') === 'lettered' ||
+    modelItem.getAttribute('listType') === 'roman' ? 'ol' : 'ul';
 	let listStyle = null;
 
 	if (modelItem.getAttribute('listType') === 'numbered') {
 		listStyle = { 'style': 'list-style: decimal', 'type': '1' };
 	} else if (modelItem.getAttribute('listType') === 'lettered') {
 		listStyle = { 'style': 'list-style: lower-alpha', 'type': 'a' };
+	} else if (modelItem.getAttribute('listType') === 'roman') {
+		listStyle = { 'style': 'list-style: lower-roman', 'type': 'i' };
 	} else {
-		listStyle = null;
+		listStyle = { 'style': null, 'type': 'bullet' };
 	}
 
 	const viewItem = createViewListItemElement(viewWriter);

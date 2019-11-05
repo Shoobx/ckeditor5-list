@@ -33,7 +33,7 @@ import {
 /**
  * The engine of the list feature. It handles creating, editing and removing lists and list items.
  *
- * It registers the `'numberedList'`, `'bulletedList'`, `'indentList'` and `'outdentList'` commands.
+ * It registers the `'numberedList'`, `'letteredList'`, `'romanList'`, `'bulletList'`, `'indentList'` and `'outdentList'` commands.
  *
  * @extends module:core/plugin~Plugin
  */
@@ -103,7 +103,8 @@ export default class ListEditing extends Plugin {
 		// Register commands for numbered and bulleted list.
 		editor.commands.add( 'numberedList', new ListCommand( editor, 'numbered' ) );
 		editor.commands.add( 'letteredList', new ListCommand(editor, 'lettered'  ) );
-		editor.commands.add( 'bulletedList', new ListCommand( editor, 'bulleted' ) );
+		editor.commands.add( 'romanList', new ListCommand(editor, 'roman'  ) );
+		editor.commands.add( 'bulletList', new ListCommand( editor, 'bullet' ) );
 
 		// Register commands for indenting.
 		editor.commands.add( 'indentList', new IndentCommand( editor, 'forward' ) );
