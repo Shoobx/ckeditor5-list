@@ -16,6 +16,13 @@ import {
 } from './utils';
 import TreeWalker from '@ckeditor/ckeditor5-engine/src/model/treewalker';
 
+const typeToListType = {
+  '1': 'numbered',
+  'a': 'lettered',
+  'i': 'roman',
+  'bullet': 'bullet',
+};
+
 /**
  * A model-to-view converter for the `listItem` model element insertion.
  *
@@ -122,7 +129,7 @@ export function modelViewChangeType( evt, data, conversionApi ) {
 	// Change name of the view list that holds the changed view item.
 	// We cannot just change name property, because that would not render properly.
 	const viewList = viewItem.parent;
-	const listName = data.attributeNewValue === 'numbered' || data.attributeNewValue === 'lettered' ? 'ol' : 'ul';
+	const listName = data.attributeNewValue === 'numbered' || data.attributeNewValue === 'lettered' || data.attributeNewValue === 'roman' ? 'ol' : 'ul';
 
 	viewWriter.rename( listName, viewList );
 }
@@ -147,13 +154,17 @@ export function modelViewMergeAfterChangeType( evt, data, conversionApi ) {
 	let listStyle = null;
 	let listType = null;
 	if (data.attributeNewValue === 'numbered') {
-		listStyle = 'decimal';
+		  listStyle = 'decimal';
 	    listType = '1';
 	} else if (data.attributeNewValue === 'lettered') {
 	    listStyle = 'lower-alpha';
 	    listType = 'a';
+	}  else if (data.attributeNewValue === 'roman') {
+	    listStyle = 'lower-roman';
+	    listType = 'i';
 	} else {
 	    listStyle = null;
+	    listType = 'bullet';
 	}
 	viewWriter.setStyle('list-style', listStyle, viewItem.parent);
 	viewWriter.setAttribute('type', listType, viewItem.parent);
@@ -163,25 +174,28 @@ export function modelViewMergeAfterChangeType( evt, data, conversionApi ) {
 
 	if (listStyle) {
 
-		while (cursor.nextSibling && cursor.nextSibling.name === 'listItem' &&
-			cursor.nextSibling.getAttribute('listIndent') === indent) {
-			cursor = cursor.nextSibling;
-			viewWriter.setAttribute('listType', data.attributeNewValue, cursor);
-		}
+	  while (cursor.nextSibling && cursor.nextSibling.name === 'listItem' && cursor.nextSibling.getAttribute('listIndent') >= indent) {
+	    if (cursor.nextSibling.getAttribute('listIndent') === indent) {
+        viewWriter.setAttribute('listType', data.attributeNewValue, cursor.nextSibling);
+      }
+      cursor = cursor.nextSibling;
+    }
 
-		cursor = data.item;
-		while (cursor.previousSibling && cursor.previousSibling.name === 'listItem' && 
-			cursor.previousSibling.getAttribute('listIndent') === indent) {
-			cursor = cursor.previousSibling;
-			viewWriter.setAttribute('listType', data.attributeNewValue, cursor);
-		}
+    cursor = data.item;
 
+	  while (cursor.previousSibling && cursor.previousSibling.name === 'listItem' && cursor.previousSibling.getAttribute('listIndent') === indent) {
+      if (cursor.previousSibling.getAttribute('listIndent') === indent) {
+        viewWriter.setAttribute('listType', data.attributeNewValue, cursor.previousSibling);
+      }
+      cursor = cursor.previousSibling;
+    }
 	}
 
 	// Consumable insertion of children inside the item. They are already handled by re-building the item in view.
 	for ( const child of data.item.getChildren() ) {
 		conversionApi.consumable.consume( child, 'insert' );
 	}
+
 }
 
 /**
@@ -210,6 +224,13 @@ export function modelViewChangeIndent( model ) {
 		const viewListPrev = viewList.previousSibling;
 		const removeRange = viewWriter.createRangeOn( viewList );
 		viewWriter.remove( removeRange );
+
+
+		if (viewListPrev.parent.parent) {
+      viewList._setAttribute('type', viewListPrev.parent.parent.getAttribute('type'));
+      viewList._setStyle('list-style', viewListPrev.parent.parent.getStyle('list-style'));
+      data.item._setAttribute('listType', typeToListType[viewListPrev.parent.parent.getAttribute('type')]);
+    }
 
 		if ( viewListPrev && viewListPrev.nextSibling ) {
 			mergeViewLists( viewWriter, viewListPrev, viewListPrev.nextSibling );
@@ -408,18 +429,21 @@ export function viewModelConverter( evt, data, conversionApi ) {
 
 		writer.setAttribute( 'listIndent', indent, listItem );
 
-		// Set 'bulleted' as default. If this item is pasted into a context,
-	    let type = 'bulleted';
+		// Set 'bullet' as default. If this item is pasted into a context,
+	    let type = 'bullet';
 
 	    if (data.viewItem.parent && data.viewItem.parent.name === 'ol') {
 	    	if (data.viewItem.parent._styles.get('list-style') === 'decimal' || 
 	    		data.viewItem.parent.getAttribute('type') === '1') {
 	    		type = 'numbered';
-	    	} else {
+	    	} else if (data.viewItem.parent._styles.get('list-style') === 'lower-alpha' ||
+	    		data.viewItem.parent.getAttribute('type') === 'a') {
 	    		type = 'lettered';
+	    	} else {
+	    		type = 'roman';
 	    	}
 		} else {
-	      type = 'bulleted';
+	      type = 'bullet';
 	    }
 
 	    writer.setAttribute('listType', type, listItem);
