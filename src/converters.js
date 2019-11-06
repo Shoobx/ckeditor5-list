@@ -174,24 +174,21 @@ export function modelViewMergeAfterChangeType( evt, data, conversionApi ) {
 
 	if (listStyle) {
 
-		while (cursor.nextSibling && cursor.nextSibling.name !== 'paragraph') {
-			if (cursor.nextSibling.getAttribute('listIndent') === indent) {
-			  cursor = cursor.nextSibling;
-			  viewWriter.setAttribute('listType', data.attributeNewValue, cursor);
-      } else {
-			  cursor = cursor.nextSibling;
+	  while (cursor.nextSibling && cursor.nextSibling.name === 'listItem' && cursor.nextSibling.getAttribute('listIndent') >= indent) {
+	    if (cursor.nextSibling.getAttribute('listIndent') === indent) {
+        viewWriter.setAttribute('listType', data.attributeNewValue, cursor.nextSibling);
       }
-		}
+      cursor = cursor.nextSibling;
+    }
 
-		cursor = data.item;
-		while (cursor.previousSibling && cursor.previousSibling.name !== 'paragraph') {
-		  if (cursor.previousSibling.getAttribute('listIndent') === indent) {
-		    cursor = cursor.previousSibling;
-			  viewWriter.setAttribute('listType', data.attributeNewValue, cursor);
-      } else {
-		    cursor = cursor.previousSibling;
+    cursor = data.item;
+
+	  while (cursor.previousSibling && cursor.previousSibling.name === 'listItem' && cursor.previousSibling.getAttribute('listIndent') === indent) {
+      if (cursor.previousSibling.getAttribute('listIndent') === indent) {
+        viewWriter.setAttribute('listType', data.attributeNewValue, cursor.previousSibling);
       }
-		}
+      cursor = cursor.previousSibling;
+    }
 	}
 
 	// Consumable insertion of children inside the item. They are already handled by re-building the item in view.
@@ -227,6 +224,7 @@ export function modelViewChangeIndent( model ) {
 		const viewListPrev = viewList.previousSibling;
 		const removeRange = viewWriter.createRangeOn( viewList );
 		viewWriter.remove( removeRange );
+
 
 		if (viewListPrev.parent.parent) {
       viewList._setAttribute('type', viewListPrev.parent.parent.getAttribute('type'));
