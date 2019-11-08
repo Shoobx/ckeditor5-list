@@ -8,20 +8,14 @@
  */
 
 import {
-	generateLiInUl,
-	injectViewList,
-	mergeViewLists,
-	getSiblingListItem,
-	positionAfterUiElements
+  listTypeToType, typeToListStyle, listTypeToListStyle, orderedListType,
+  generateLiInUl,
+  injectViewList,
+  mergeViewLists,
+  getSiblingListItem,
+  positionAfterUiElements,
 } from './utils';
 import TreeWalker from '@ckeditor/ckeditor5-engine/src/model/treewalker';
-
-const typeToListType = {
-  '1': 'numbered',
-  'a': 'lettered',
-  'i': 'roman',
-  'bullet': 'bullet',
-};
 
 /**
  * A model-to-view converter for the `listItem` model element insertion.
@@ -129,7 +123,7 @@ export function modelViewChangeType( evt, data, conversionApi ) {
 	// Change name of the view list that holds the changed view item.
 	// We cannot just change name property, because that would not render properly.
 	const viewList = viewItem.parent;
-	const listName = data.attributeNewValue === 'numbered' || data.attributeNewValue === 'lettered' || data.attributeNewValue === 'roman' ? 'ol' : 'ul';
+	const listName = orderedListType.includes(data.attributeNewValue) ? 'ol' : 'ul';
 
 	viewWriter.rename( listName, viewList );
 }
@@ -151,23 +145,11 @@ export function modelViewMergeAfterChangeType( evt, data, conversionApi ) {
 	mergeViewLists( viewWriter, viewList, viewList.nextSibling );
 	mergeViewLists( viewWriter, viewList.previousSibling, viewList );
 
-	let listStyle = null;
-	let listType = null;
-	if (data.attributeNewValue === 'numbered') {
-		  listStyle = 'decimal';
-	    listType = '1';
-	} else if (data.attributeNewValue === 'lettered') {
-	    listStyle = 'lower-alpha';
-	    listType = 'a';
-	}  else if (data.attributeNewValue === 'roman') {
-	    listStyle = 'lower-roman';
-	    listType = 'i';
-	} else {
-	    listStyle = null;
-	    listType = 'bullet';
-	}
+	const listStyle = listTypeToListStyle[data.attributeNewValue];
+	const type = listTypeToType[data.attributeNewValue];
+
 	viewWriter.setStyle('list-style', listStyle, viewItem.parent);
-	viewWriter.setAttribute('type', listType, viewItem.parent);
+	viewWriter.setAttribute('type', type, viewItem.parent);
 
 	let cursor = data.item;
 	const indent = cursor.getAttribute('listIndent');
@@ -224,6 +206,9 @@ export function modelViewChangeIndent( model ) {
 		const viewListPrev = viewList.previousSibling;
 		const removeRange = viewWriter.createRangeOn( viewList );
 		viewWriter.remove( removeRange );
+
+		viewList._setAttribute('type', listTypeToType[data.item.getAttribute('listType')]);
+    viewList._setStyle('list-style', typeToListStyle[data.item.getAttribute('listType')]);
 
 		if ( viewListPrev && viewListPrev.nextSibling ) {
 			mergeViewLists( viewWriter, viewListPrev, viewListPrev.nextSibling );
