@@ -225,13 +225,6 @@ export function modelViewChangeIndent( model ) {
 		const removeRange = viewWriter.createRangeOn( viewList );
 		viewWriter.remove( removeRange );
 
-
-		if (viewListPrev.parent.parent) {
-      viewList._setAttribute('type', viewListPrev.parent.parent.getAttribute('type'));
-      viewList._setStyle('list-style', viewListPrev.parent.parent.getStyle('list-style'));
-      data.item._setAttribute('listType', typeToListType[viewListPrev.parent.parent.getAttribute('type')]);
-    }
-
 		if ( viewListPrev && viewListPrev.nextSibling ) {
 			mergeViewLists( viewWriter, viewListPrev, viewListPrev.nextSibling );
 		}
