@@ -64,7 +64,7 @@ export default class ListEditing extends Plugin {
 		// If there are blocks allowed inside list item, algorithms using `getSelectedBlocks()` will have to be modified.
 		editor.model.schema.register( 'listItem', {
 			inheritAllFrom: '$block',
-			allowAttributes: [ 'listType', 'listIndent' ]
+			allowAttributes: [ 'listType', 'listIndent', 'start' ]
 		} );
 
 		// Converters.

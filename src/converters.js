@@ -397,6 +397,7 @@ export function modelViewMergeAfter( evt, data, conversionApi ) {
  */
 export function viewModelConverter( evt, data, conversionApi ) {
 	if ( conversionApi.consumable.consume( data.viewItem, { name: true } ) ) {
+
 		const writer = conversionApi.writer;
 
 		// 1. Create `listItem` model element.
@@ -411,20 +412,28 @@ export function viewModelConverter( evt, data, conversionApi ) {
 	    let type = 'bullet';
 
 	    if (data.viewItem.parent && data.viewItem.parent.name === 'ol') {
-	    	if (data.viewItem.parent._styles.get('list-style') === 'decimal' || 
-	    		data.viewItem.parent.getAttribute('type') === '1') {
+	    	if (
+					data.viewItem.parent._styles.get('list-style') === 'decimal' ||
+					data.viewItem.parent.getAttribute('type') === '1'
+				) {
 	    		type = 'numbered';
 	    	} else if (data.viewItem.parent._styles.get('list-style') === 'lower-alpha' ||
 	    		data.viewItem.parent.getAttribute('type') === 'a') {
 	    		type = 'lettered';
 	    	} else {
 	    		type = 'roman';
-	    	}
-		} else {
+				}
+
+				const start = data.viewItem.parent.getAttribute('start');
+				if (start) {
+					writer.setAttribute('start', start, listItem);
+				}
+			} else {
 	      type = 'bullet';
 	    }
 
 	    writer.setAttribute('listType', type, listItem);
+
 
 		// Try to find allowed parent for list item.
 		const splitResult = conversionApi.splitToAllowedParent( listItem, data.modelCursor );

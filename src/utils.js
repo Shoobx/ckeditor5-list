@@ -60,10 +60,15 @@ export function generateLiInUl( modelItem, conversionApi ) {
 	const mapper = conversionApi.mapper;
 	const viewWriter = conversionApi.writer;
 	const listType = orderedListType.includes(modelItem.getAttribute('listType')) ? 'ol' : 'ul';
+
 	let listStyle = {
 	  'style': 'list-style: ' + listTypeToListStyle[modelItem.getAttribute('listType')],
-    'type': listTypeToType[modelItem.getAttribute('listType')],
-  };
+		'type': listTypeToType[modelItem.getAttribute('listType')],
+	};
+
+	if (modelItem.getAttribute('start')) {
+		listStyle['start'] = modelItem.getAttribute('start');
+	}
 
 	const viewItem = createViewListItemElement(viewWriter);
 	const viewList = viewWriter.createContainerElement(listType, listStyle);
