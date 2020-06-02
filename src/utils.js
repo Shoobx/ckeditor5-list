@@ -11,24 +11,24 @@ import { getFillerOffset } from '@ckeditor/ckeditor5-engine/src/view/containerel
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 
 export const listTypeToType = {
-  'numbered': '1',
-  'lettered': 'a',
-  'roman': 'i',
-  'bullet': 'bullet',
+	'numbered': '1',
+	'lettered': 'a',
+	'roman': 'i',
+	'bullet': 'bullet',
 };
 
 export const typeToListStyle = {
-  '1': 'decimal',
-  'a': 'lower-alpha',
-  'i': 'lower-roman',
-  'bullet': null,
+	'1': 'decimal',
+	'a': 'lower-alpha',
+	'i': 'lower-roman',
+	'bullet': null,
 };
 
 export const listTypeToListStyle = {
-  'numbered': 'decimal',
-  'lettered': 'lower-alpha',
-  'roman': 'lower-roman',
-  'bullet': null,
+	'numbered': 'decimal',
+	'lettered': 'lower-alpha',
+	'roman': 'lower-roman',
+	'bullet': null,
 };
 
 export const orderedListType = ['numbered', 'lettered', 'roman'];
@@ -62,7 +62,7 @@ export function generateLiInUl( modelItem, conversionApi ) {
 	const listType = orderedListType.includes(modelItem.getAttribute('listType')) ? 'ol' : 'ul';
 
 	let listStyle = {
-	  'style': 'list-style: ' + listTypeToListStyle[modelItem.getAttribute('listType')],
+		'style': 'list-style: ' + listTypeToListStyle[modelItem.getAttribute('listType')],
 		'type': listTypeToType[modelItem.getAttribute('listType')],
 	};
 
@@ -105,7 +105,7 @@ export function injectViewList( modelItem, injectedItem, conversionApi, model ) 
 	const refItem = getSiblingListItem( modelItem.previousSibling, {
 		sameIndent: true,
 		smallerIndent: true,
-		listIndent: modelItem.getAttribute( 'listIndent' )
+		listIndent: modelItem.getAttribute( 'listIndent' ),
 	} );
 	const prevItem = modelItem.previousSibling;
 
@@ -118,7 +118,7 @@ export function injectViewList( modelItem, injectedItem, conversionApi, model ) 
 			const brElement = viewWriter.createEmptyElement('paragraph');
 			viewWriter.insert(insertPosition, brElement);
 			insertPosition = viewWriter.createPositionAfter(brElement);
-	    }
+		}
 	} else {
 		// There is no list item with the same indent. Check the previous model item.
 		if ( prevItem && prevItem.name == 'listItem' ) {
