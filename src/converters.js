@@ -8,12 +8,12 @@
  */
 
 import {
-  listTypeToType, typeToListStyle, listTypeToListStyle, orderedListType,
-  generateLiInUl,
-  injectViewList,
-  mergeViewLists,
-  getSiblingListItem,
-  positionAfterUiElements,
+	listTypeToType, typeToListStyle, listTypeToListStyle, orderedListType,
+	generateLiInUl,
+	injectViewList,
+	mergeViewLists,
+	getSiblingListItem,
+	positionAfterUiElements,
 } from './utils';
 import TreeWalker from '@ckeditor/ckeditor5-engine/src/model/treewalker';
 
@@ -156,21 +156,21 @@ export function modelViewMergeAfterChangeType( evt, data, conversionApi ) {
 
 	if (listStyle) {
 
-	  while (cursor.nextSibling && cursor.nextSibling.name === 'listItem' && cursor.nextSibling.getAttribute('listIndent') >= indent) {
-	    if (cursor.nextSibling.getAttribute('listIndent') === indent) {
-        viewWriter.setAttribute('listType', data.attributeNewValue, cursor.nextSibling);
-      }
-      cursor = cursor.nextSibling;
-    }
+		while (cursor.nextSibling && cursor.nextSibling.name === 'listItem' && cursor.nextSibling.getAttribute('listIndent') >= indent) {
+			if (cursor.nextSibling.getAttribute('listIndent') === indent) {
+				viewWriter.setAttribute('listType', data.attributeNewValue, cursor.nextSibling);
+			}
+			cursor = cursor.nextSibling;
+		}
 
-    cursor = data.item;
+		cursor = data.item;
 
-	  while (cursor.previousSibling && cursor.previousSibling.name === 'listItem' && cursor.previousSibling.getAttribute('listIndent') === indent) {
-      if (cursor.previousSibling.getAttribute('listIndent') === indent) {
-        viewWriter.setAttribute('listType', data.attributeNewValue, cursor.previousSibling);
-      }
-      cursor = cursor.previousSibling;
-    }
+		while (cursor.previousSibling && cursor.previousSibling.name === 'listItem' && cursor.previousSibling.getAttribute('listIndent') === indent) {
+			if (cursor.previousSibling.getAttribute('listIndent') === indent) {
+				viewWriter.setAttribute('listType', data.attributeNewValue, cursor.previousSibling);
+			}
+			cursor = cursor.previousSibling;
+		}
 	}
 
 	// Consumable insertion of children inside the item. They are already handled by re-building the item in view.
@@ -208,7 +208,8 @@ export function modelViewChangeIndent( model ) {
 		viewWriter.remove( removeRange );
 
 		viewList._setAttribute('type', listTypeToType[data.item.getAttribute('listType')]);
-    viewList._setStyle('list-style', typeToListStyle[data.item.getAttribute('listType')]);
+		viewList._setAttribute('start', 1);
+		viewList._setStyle('list-style', typeToListStyle[data.item.getAttribute('listType')]);
 
 		if ( viewListPrev && viewListPrev.nextSibling ) {
 			mergeViewLists( viewWriter, viewListPrev, viewListPrev.nextSibling );
@@ -409,30 +410,29 @@ export function viewModelConverter( evt, data, conversionApi ) {
 		writer.setAttribute( 'listIndent', indent, listItem );
 
 		// Set 'bullet' as default. If this item is pasted into a context,
-	    let type = 'bullet';
+			let type = 'bullet';
 
-	    if (data.viewItem.parent && data.viewItem.parent.name === 'ol') {
-	    	if (
+			if (data.viewItem.parent && data.viewItem.parent.name === 'ol') {
+				if (
 					data.viewItem.parent._styles.get('list-style') === 'decimal' ||
 					data.viewItem.parent.getAttribute('type') === '1'
 				) {
-	    		type = 'numbered';
-	    	} else if (data.viewItem.parent._styles.get('list-style') === 'lower-alpha' ||
-	    		data.viewItem.parent.getAttribute('type') === 'a') {
-	    		type = 'lettered';
-	    	} else {
-	    		type = 'roman';
+					type = 'numbered';
+				} else if (data.viewItem.parent._styles.get('list-style') === 'lower-alpha' ||
+					data.viewItem.parent.getAttribute('type') === 'a') {
+					type = 'lettered';
+				} else {
+					type = 'roman';
 				}
-
 				const start = data.viewItem.parent.getAttribute('start');
 				if (start) {
 					writer.setAttribute('start', start, listItem);
 				}
 			} else {
-	      type = 'bullet';
-	    }
+				type = 'bullet';
+			}
 
-	    writer.setAttribute('listType', type, listItem);
+			writer.setAttribute('listType', type, listItem);
 
 
 		// Try to find allowed parent for list item.

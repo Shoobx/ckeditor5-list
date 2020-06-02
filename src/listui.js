@@ -14,11 +14,10 @@ import bulletListIcon from '../theme/icons/bulletedlist.svg';
 import alphaListIcon from '../theme/icons/alphalist.svg';
 import romanListIcon from '../theme/icons/romanlist.svg';
 
-
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import {
 	addToolbarToDropdown,
-  	createDropdown,
+	createDropdown,
 } from '@ckeditor/ckeditor5-ui/src/dropdown/utils';
 
 
@@ -34,17 +33,17 @@ export default class ListUI extends Plugin {
 	 */
 	init() {
 		const editor = this.editor;
-	    const componentFactory = editor.ui.componentFactory;
-	    const options = ['numberedList', 'letteredList', 'romanList', 'bulletList'];
+		const componentFactory = editor.ui.componentFactory;
+		const options = ['numberedList', 'letteredList', 'romanList', 'bulletList'];
 		const t = this.editor.t;
 
 		// Create two buttons and link them with numberedList and bulletList commands.
-	    createUIComponent(this.editor, 'numberedList', t('Number List'), numberedListIcon);
-	    createUIComponent(this.editor, 'letteredList', t('Alpha List'), alphaListIcon);
-	    createUIComponent(this.editor, 'romanList', t('Roman List'), romanListIcon);
-	    createUIComponent(this.editor, 'bulletList', t('Bullet List'), bulletListIcon);
+		createUIComponent(this.editor, 'numberedList', t('Number List'), numberedListIcon);
+		createUIComponent(this.editor, 'letteredList', t('Alpha List'), alphaListIcon);
+		createUIComponent(this.editor, 'romanList', t('Roman List'), romanListIcon);
+		createUIComponent(this.editor, 'bulletList', t('Bullet List'), bulletListIcon);
 
-	    componentFactory.add('listStyle', locale => {
+		componentFactory.add('listStyle', locale => {
 			const dropdownView = createDropdown(locale);
 
 			const buttons = options.map(option => componentFactory.create(option));
@@ -58,8 +57,7 @@ export default class ListUI extends Plugin {
 			});
 			dropdownView.toolbarView.isVertical = true;
 			// Enable button if any of the buttons is enabled.
-			dropdownView.bind('isEnabled').toMany(buttons, 'isEnabled', 
-				(...areEnabled) => areEnabled.some(isEnabled => isEnabled));
+			dropdownView.bind('isEnabled').toMany(buttons, 'isEnabled', (...areEnabled) => areEnabled.some(isEnabled => isEnabled));
 
 			return dropdownView;
 		});
