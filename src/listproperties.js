@@ -48,7 +48,10 @@ export default class ListProperties extends Plugin {
  *			.create( editorElement, {
  *				list: {
  *					properties: {
- *						styles: true,
+ *						styles: {
+ *	 						bulletedList: [ 'disc', 'circle', 'square' ],
+ *							numberedList: [ 'decimal', 'decimal-leading-zero', 'lower-roman', 'upper-roman', 'lower-latin', 'upper-latin' ],
+ *						},
  *						startIndex: true,
  *						reversed: true
  *					}
