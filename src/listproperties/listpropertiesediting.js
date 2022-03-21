@@ -266,6 +266,20 @@ export default class ListPropertiesEditing extends Plugin {
 // @returns {Array.<module:list/listpropertiesediting~AttributeStrategy>}
 function createAttributeStrategies( enabledProperties ) {
 	const strategies = [];
+	const listTypes = {
+		'default': '1',
+		'decimal': '1',
+		'decimal-leading-zero': '1',
+		'lower-roman': 'i',
+		'upper-roman': 'I',
+		'lower-latin': 'a',
+		'upper-latin': 'A',
+		'disc': 'disc',
+		'circle': 'circle',
+		'square': 'square',
+	};
+	const styleToType = ( style ) => listTypes[style];
+	const typeToStyle = ( type ) => Object.entries(listTypes).find(([k, v]) => v === type)?.[0];
 
 	if ( enabledProperties.styles ) {
 		strategies.push( {
@@ -281,15 +295,16 @@ function createAttributeStrategies( enabledProperties ) {
 			},
 
 			setAttributeOnDowncast( writer, listStyle, element ) {
-				if ( listStyle && listStyle !== DEFAULT_LIST_TYPE ) {
-					writer.setStyle( 'list-style-type', listStyle, element );
+				const type = styleToType( listStyle );
+				if ( type && listStyle !== DEFAULT_LIST_TYPE ) {
+					writer.setAttribute( 'type', type, element );
 				} else {
-					writer.removeStyle( 'list-style-type', element );
+					writer.removeAttribute( 'type', element );
 				}
 			},
 
 			getAttributeOnUpcast( listParent ) {
-				return listParent.getStyle( 'list-style-type' ) || DEFAULT_LIST_TYPE;
+				return typeToStyle( listParent.getAttribute( 'type' ) ) || DEFAULT_LIST_TYPE;
 			}
 		} );
 	}
