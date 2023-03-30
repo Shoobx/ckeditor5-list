@@ -66,7 +66,7 @@ export default class ListPropertiesUI extends Plugin {
 		// Note: When this plugin does not register the "bulletedList" dropdown due to properties configuration,
 		// a simple button will be still registered under the same name by ListUI as a fallback. This should happen
 		// in most editor configuration because the List plugin automatically requires ListUI.
-		if ( enabledProperties.styles ) {
+		if ( enabledProperties?.styles?.bulletedList?.length > 1 ) {
 			editor.ui.componentFactory.add( 'bulletedList', getDropdownViewCreator( {
 				editor,
 				parentCommandName: 'bulletedList',
@@ -92,14 +92,14 @@ export default class ListPropertiesUI extends Plugin {
 						type: 'square',
 						icon: listStyleSquareIcon
 					}
-				]
+				].filter(item => enabledProperties?.styles?.bulletedList?.includes(item.type))
 			} ) );
 		}
 
 		// Note: When this plugin does not register the "numberedList" dropdown due to properties configuration,
 		// a simple button will be still registered under the same name by ListUI as a fallback. This should happen
 		// in most editor configuration because the List plugin automatically requires ListUI.
-		if ( enabledProperties.styles || enabledProperties.startIndex || enabledProperties.reversed ) {
+		if ( enabledProperties?.styles?.numberedList?.length > 1 || enabledProperties.startIndex || enabledProperties.reversed ) {
 			editor.ui.componentFactory.add( 'numberedList', getDropdownViewCreator( {
 				editor,
 				parentCommandName: 'numberedList',
@@ -143,7 +143,7 @@ export default class ListPropertiesUI extends Plugin {
 						type: 'upper-latin',
 						icon: listStyleUpperLatinIcon
 					}
-				]
+				].filter(item => enabledProperties?.styles?.numberedList?.includes(item.type))
 			} ) );
 		}
 	}
