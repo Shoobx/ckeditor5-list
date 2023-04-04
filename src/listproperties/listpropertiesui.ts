@@ -42,6 +42,7 @@ import listStyleLowerLatinIcon from '../../theme/icons/liststylelowerlatin.svg';
 import listStyleUpperLatinIcon from '../../theme/icons/liststyleupperlatin.svg';
 
 import '../../theme/liststyles.css';
+import {ListPropertiesStyleConfig} from "../listconfig";
 
 /**
  * The list properties UI plugin. It introduces the extended `'bulletedList'` and `'numberedList'` toolbar
@@ -66,40 +67,51 @@ export default class ListPropertiesUI extends Plugin {
 		// Note: When this plugin does not register the "bulletedList" dropdown due to properties configuration,
 		// a simple button will be still registered under the same name by ListUI as a fallback. This should happen
 		// in most editor configuration because the List plugin automatically requires ListUI.
-		if ( enabledProperties.styles ) {
-			editor.ui.componentFactory.add( 'bulletedList', getDropdownViewCreator( {
+
+		// let styles: ListPropertiesStyleConfig;
+		// try {
+		// 	styles = enabledProperties?.styles;
+		// } catch(error: any) {
+		// 	throw new Error('Wrong style type');
+		// }
+		if (enabledProperties?.styles === true || enabledProperties?.styles === false) {
+			return;
+		}
+
+		if (enabledProperties?.styles?.bulletedList?.length) {
+			editor.ui.componentFactory.add('bulletedList', getDropdownViewCreator({
 				editor,
 				parentCommandName: 'bulletedList',
-				buttonLabel: t( 'Bulleted List' ),
+				buttonLabel: t('Bulleted List'),
 				buttonIcon: bulletedListIcon,
-				styleGridAriaLabel: t( 'Bulleted list styles toolbar' ),
+				styleGridAriaLabel: t('Bulleted list styles toolbar'),
 				styleDefinitions: [
 					{
-						label: t( 'Toggle the disc list style' ),
-						tooltip: t( 'Disc' ),
+						label: t('Toggle the disc list style'),
+						tooltip: t('Disc'),
 						type: 'disc',
 						icon: listStyleDiscIcon
 					},
 					{
-						label: t( 'Toggle the circle list style' ),
-						tooltip: t( 'Circle' ),
+						label: t('Toggle the circle list style'),
+						tooltip: t('Circle'),
 						type: 'circle',
 						icon: listStyleCircleIcon
 					},
 					{
-						label: t( 'Toggle the square list style' ),
-						tooltip: t( 'Square' ),
+						label: t('Toggle the square list style'),
+						tooltip: t('Square'),
 						type: 'square',
 						icon: listStyleSquareIcon
 					}
-				]
-			} ) );
+				].filter(item => (enabledProperties?.styles as ListPropertiesStyleConfig)?.bulletedList?.includes(item.type))
+			}));
 		}
 
 		// Note: When this plugin does not register the "numberedList" dropdown due to properties configuration,
 		// a simple button will be still registered under the same name by ListUI as a fallback. This should happen
 		// in most editor configuration because the List plugin automatically requires ListUI.
-		if ( enabledProperties.styles || enabledProperties.startIndex || enabledProperties.reversed ) {
+		if ( enabledProperties?.styles?.numberedList?.length || enabledProperties.startIndex || enabledProperties.reversed ) {
 			editor.ui.componentFactory.add( 'numberedList', getDropdownViewCreator( {
 				editor,
 				parentCommandName: 'numberedList',
@@ -143,7 +155,7 @@ export default class ListPropertiesUI extends Plugin {
 						type: 'upper-latin',
 						icon: listStyleUpperLatinIcon
 					}
-				]
+				].filter(item => (enabledProperties?.styles as ListPropertiesStyleConfig)?.numberedList?.includes(item.type))
 			} ) );
 		}
 	}
@@ -389,3 +401,9 @@ interface StyleDefinition {
 	 */
 	tooltip: string;
 }
+
+type test = { nested?: string[] | undefined }
+
+const instance: test = { nested: [] }
+
+instance?.nested?.length;

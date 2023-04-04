@@ -53,7 +53,10 @@ export interface ListConfig {
  * 	.create( editorElement, {
  * 		list: {
  * 			properties: {
- * 				styles: true,
+ * 				styles: {
+ * 	 				bulletedList: [ 'disc', 'circle', 'square' ],
+ * 					numberedList: [ 'decimal', 'decimal-leading-zero', 'lower-roman', 'upper-roman', 'lower-latin', 'upper-latin' ],
+ * 				},
  * 				startIndex: true,
  * 				reversed: true
  * 			}
@@ -128,4 +131,6 @@ export interface ListPropertiesStyleConfig {
 	 * @default false
 	 */
 	useAttribute?: boolean;
+	bulletedList?: string[],
+	numberedList?: string[],
 }
