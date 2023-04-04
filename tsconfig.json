@@ -12,11 +12,12 @@
 	"sourceMap": false,
 	"allowJs": true,
 	"moduleResolution": "node",
-	"skipLibCheck": true
+	"skipLibCheck": true,
+	"outDir": "lib",
   },
   "include": [
 	"src",
-	"./typings/"
+	"typings/"
   ],
   "exclude": [
 	"tests"
