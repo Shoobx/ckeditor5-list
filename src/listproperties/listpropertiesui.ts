@@ -42,7 +42,7 @@ import listStyleLowerLatinIcon from '../../theme/icons/liststylelowerlatin.svg';
 import listStyleUpperLatinIcon from '../../theme/icons/liststyleupperlatin.svg';
 
 import '../../theme/liststyles.css';
-import {ListPropertiesStyleConfig} from "../listconfig";
+import {ListPropertiesConfig, ListPropertiesStyleConfig} from "../listconfig";
 
 /**
  * The list properties UI plugin. It introduces the extended `'bulletedList'` and `'numberedList'` toolbar
@@ -62,18 +62,12 @@ export default class ListPropertiesUI extends Plugin {
 	public init(): void {
 		const editor = this.editor;
 		const t = editor.locale.t;
-		const enabledProperties = editor.config.get( 'list.properties' )!;
+		const enabledProperties: ListPropertiesConfig = editor.config.get( 'list.properties' )!;
 
 		// Note: When this plugin does not register the "bulletedList" dropdown due to properties configuration,
 		// a simple button will be still registered under the same name by ListUI as a fallback. This should happen
 		// in most editor configuration because the List plugin automatically requires ListUI.
 
-		// let styles: ListPropertiesStyleConfig;
-		// try {
-		// 	styles = enabledProperties?.styles;
-		// } catch(error: any) {
-		// 	throw new Error('Wrong style type');
-		// }
 		if (enabledProperties?.styles === true || enabledProperties?.styles === false) {
 			return;
 		}
@@ -315,7 +309,7 @@ function createListPropertiesView( {
 	styleGridAriaLabel: string;
 } ) {
 	const locale = editor.locale;
-	const enabledProperties = editor.config.get( 'list.properties' )!;
+	const enabledProperties: ListPropertiesConfig = editor.config.get( 'list.properties' )!;
 	let styleButtonViews = null;
 
 	if ( parentCommandName != 'numberedList' ) {

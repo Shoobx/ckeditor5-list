@@ -25,6 +25,7 @@ import {
 } from 'ckeditor5/src/engine';
 
 import { ButtonView, type ButtonExecuteEvent } from 'ckeditor5/src/ui';
+import { DocumentListCommand, ListCommand } from "../index";
 
 /**
  * Creates a list item {@link module:engine/view/containerelement~ContainerElement}.
@@ -291,7 +292,7 @@ export function createUIComponent(
 	icon: string
 ): void {
 	editor.ui.componentFactory.add( commandName, locale => {
-		const command = editor.commands.get( commandName )!;
+		const command: ListCommand | DocumentListCommand = editor.commands.get( commandName )!;
 		const buttonView = new ButtonView( locale );
 
 		buttonView.set( {
