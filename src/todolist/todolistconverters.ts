@@ -167,10 +167,10 @@ export const dataViewModelCheckmarkInsertion: GetCallback<UpcastElementEvent> = 
 
 	const writer = conversionApi.writer;
 
-	writer.setAttribute( 'listType', 'todo', modelItem );
+	writer.setAttribute( 'listType', 'todo', modelItem as any );
 
 	if ( data.viewItem.hasAttribute( 'checked' ) ) {
-		writer.setAttribute( 'todoListChecked', true, modelItem );
+		writer.setAttribute( 'todoListChecked', true, modelItem as any );
 	}
 
 	data.modelRange = writer.createRange( modelCursor );
