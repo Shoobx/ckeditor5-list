@@ -64,7 +64,11 @@ export default class ListPropertiesEditing extends Plugin {
 
 		editor.config.define( 'list', {
 			properties: {
-				styles: true,
+				styles: {
+					// @ts-ignore
+					bulletedList: [ 'disc', 'circle', 'square' ],
+					numberedList: [ 'decimal', 'decimal-leading-zero', 'lower-roman', 'upper-roman', 'lower-latin', 'upper-latin' ],
+				},
 				startIndex: false,
 				reversed: false
 			}
@@ -277,6 +281,20 @@ interface AttributeStrategy {
  */
 function createAttributeStrategies( enabledProperties: ListPropertiesConfig ) {
 	const strategies: Array<AttributeStrategy> = [];
+	const listTypes: { [style: string]: string } = {
+		'default': '1',
+		'decimal': '1',
+		'decimal-leading-zero': '1',
+		'lower-roman': 'i',
+		'upper-roman': 'I',
+		'lower-latin': 'a',
+		'upper-latin': 'A',
+		'disc': 'disc',
+		'circle': 'circle',
+		'square': 'square',
+	};
+	const styleToType = ( style: string ) => listTypes[style];
+	const typeToStyle = ( type: string ) => Object.entries(listTypes).find(([k, v]) => v === type)?.[0];
 
 	if ( enabledProperties.styles ) {
 		strategies.push( {
@@ -292,15 +310,16 @@ function createAttributeStrategies( enabledProperties: ListPropertiesConfig ) {
 			},
 
 			setAttributeOnDowncast( writer, listStyle, element ) {
-				if ( listStyle && listStyle !== DEFAULT_LIST_TYPE ) {
-					writer.setStyle( 'list-style-type', listStyle, element );
+				const type = styleToType( listStyle );
+				if ( type && listStyle !== DEFAULT_LIST_TYPE ) {
+					writer.setAttribute( 'type', type, element );
 				} else {
-					writer.removeStyle( 'list-style-type', element );
+					writer.removeAttribute( 'type', element );
 				}
 			},
 
 			getAttributeOnUpcast( listParent ) {
-				return listParent.getStyle( 'list-style-type' ) || DEFAULT_LIST_TYPE;
+				return typeToStyle( listParent.getAttribute( 'type' )! ) || DEFAULT_LIST_TYPE;
 			}
 		} );
 	}
