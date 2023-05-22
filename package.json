@@ -80,6 +80,6 @@
     "dll:build": "webpack",
     "build": "tsc -p ./tsconfig.json",
     "postversion": "npm run build",
-    "postinstall": "tsc -p ./tsconfig.json --outDir build"
+    "postinstall": "./node_modules/typescript/bin/tsc -p ./tsconfig.json --outDir build"
   }
 }
