@@ -60,8 +60,8 @@ export default class TodoListEditing extends Plugin {
 	/**
 	 * @inheritDoc
 	 */
-	public static get pluginName(): 'TodoListEditing' {
-		return 'TodoListEditing';
+	public static get pluginName() {
+		return 'TodoListEditing' as const;
 	}
 
 	/**
@@ -236,8 +236,8 @@ function jumpOverCheckmarkOnSideArrowKeyPress( model: Model, locale: Locale ): G
 		const position = selection.getFirstPosition()!;
 		const parent = position.parent;
 
-		if ( parent.name === 'listItem' && (parent as any).getAttribute( 'listType' ) == 'todo' && position.isAtStart ) {
-			const newRange = schema.getNearestSelectionRange( model.createPositionBefore( parent as any ), 'backward' );
+		if ( parent.name === 'listItem' && parent.getAttribute( 'listType' ) == 'todo' && position.isAtStart ) {
+			const newRange = schema.getNearestSelectionRange( model.createPositionBefore( parent ), 'backward' );
 
 			if ( newRange ) {
 				model.change( writer => writer.setSelection( newRange ) );
