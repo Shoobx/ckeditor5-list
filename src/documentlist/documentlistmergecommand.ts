@@ -109,7 +109,7 @@ export default class DocumentListMergeCommand extends Command {
 				changedBlocks.push( lastElementAfterDelete as any );
 
 				if ( nextSibling && nextSibling !== lastElement && nextSibling.getAttribute( 'listItemId' ) == lastElementId ) {
-					changedBlocks.push( ...mergeListItemBefore( nextSibling, lastElementAfterDelete as any, writer ) );
+					changedBlocks.push( ...mergeListItemBefore( nextSibling, lastElementAfterDelete, writer ) );
 				}
 			} else {
 				changedBlocks.push( ...mergeListItemBefore( lastElement, firstElement, writer ) );
