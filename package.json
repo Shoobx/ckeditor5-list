@@ -11,7 +11,7 @@
     "ckeditor5-dll"
   ],
   "type": "module",
-  "main": "src/index.ts",
+  "main": "build/index.js",
   "dependencies": {
     "ckeditor5": "41.3.1"
   },
@@ -75,6 +75,9 @@
   ],
   "scripts": {
     "dll:build": "webpack",
-    "build": "tsc -p ./tsconfig.json"
+    "build": "tsc -p ./tsconfig.json",
+    "postversion": "npm run build",
+    "tsc": "tsc -p ./tsconfig.json --outDir build",
+    "postinstall": "npm run tsc"
   }
 }

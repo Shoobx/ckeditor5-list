@@ -73,7 +73,11 @@ export default class ListPropertiesEditing extends Plugin {
 		super( editor );
 
 		editor.config.define( 'list.properties', {
-			styles: true,
+			styles: {
+				// @ts-ignore
+				bulletedList: [ 'disc', 'circle', 'square' ],
+				numberedList: [ 'decimal', 'decimal-leading-zero', 'lower-roman', 'upper-roman', 'lower-latin', 'upper-latin' ],
+			},
 			startIndex: false,
 			reversed: false
 		} );
@@ -255,6 +259,21 @@ export interface AttributeStrategy {
  * Creates an array of strategies for dealing with enabled listItem attributes.
  */
 function createAttributeStrategies( enabledProperties: ListPropertiesConfig ) {
+	// FIXME: Check if we still need that
+	// const listTypes: { [style: string]: string } = {
+	// 	'default': '1',
+	// 	'decimal': '1',
+	// 	'decimal-leading-zero': '1',
+	// 	'lower-roman': 'i',
+	// 	'upper-roman': 'I',
+	// 	'lower-latin': 'a',
+	// 	'upper-latin': 'A',
+	// 	'disc': 'disc',
+	// 	'circle': 'circle',
+	// 	'square': 'square',
+	// };
+	// const styleToType = ( style: string ) => listTypes[style];
+	// const typeToStyle = ( type: string ) => Object.entries(listTypes).find(([k, v]) => v === type)?.[0];
 	const strategies: Array<AttributeStrategy> = [];
 
 	if ( enabledProperties.styles ) {
@@ -298,6 +317,11 @@ function createAttributeStrategies( enabledProperties: ListPropertiesConfig ) {
 			},
 
 			setAttributeOnDowncast( writer, listStyle, element ) {
+				// const type = styleToType( listStyle );
+				// if ( type && listStyle !== DEFAULT_LIST_TYPE ) {
+				// 	writer.setAttribute( 'type', type, element );
+				// }
+				// FIXME: check if that works for us
 				if ( listStyle && listStyle !== DEFAULT_LIST_TYPE ) {
 					if ( useAttribute ) {
 						const value = getTypeAttributeFromListStyleType( listStyle as string );
@@ -312,6 +336,9 @@ function createAttributeStrategies( enabledProperties: ListPropertiesConfig ) {
 
 						return;
 					}
+				} else {
+					writer.removeStyle( 'list-style-type', element );
+					writer.removeAttribute( 'type', element );
 				}
 
 				writer.removeStyle( 'list-style-type', element );
@@ -319,6 +346,8 @@ function createAttributeStrategies( enabledProperties: ListPropertiesConfig ) {
 			},
 
 			getAttributeOnUpcast( listParent ) {
+				// return typeToStyle( listParent.getAttribute( 'type' )! ) || DEFAULT_LIST_TYPE;
+				// FIXME: check if that works for us
 				const style = listParent.getStyle( 'list-style-type' );
 
 				if ( style ) {
