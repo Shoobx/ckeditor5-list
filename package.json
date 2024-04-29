@@ -76,7 +76,6 @@
   "scripts": {
     "dll:build": "webpack",
     "build": "tsc -p ./tsconfig.json",
-    "postversion": "npm run build",
     "tsc": "tsc -p ./tsconfig.json --outDir build",
     "postinstall": "npm run tsc"
   }
