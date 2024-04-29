@@ -317,18 +317,8 @@ function createAttributeStrategies( enabledProperties: ListPropertiesConfig ) {
 			setAttributeOnDowncast( writer, listStyle, element ) {
 				const type = styleToType( listStyle );
 				if ( type && listStyle !== DEFAULT_LIST_TYPE ) {
-					if ( useAttribute ) {
-						const value = getTypeAttributeFromListStyleType( listStyle as string );
-						if ( value ) {
-							writer.setAttribute( 'type', value, element );
-							return;
-						}
-					} else {
-						writer.setStyle( 'list-style-type', listStyle as string, element );
-						return;
-					}
+					writer.setAttribute( 'type', type, element );
 				} else {
-					writer.removeStyle( 'list-style-type', element );
 					writer.removeAttribute( 'type', element );
 				}
 			},
