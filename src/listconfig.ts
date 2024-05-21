@@ -120,7 +120,7 @@ export interface ListPropertiesStyleConfig {
 	 * 	list: {
 	 * 		properties: {
 	 * 			styles: {
-	 * 				useAttribute: true
+	 * 				useAttribute: true,
 	 * 			},
 	 *
 	 * 			// ...
@@ -139,4 +139,6 @@ export interface ListPropertiesStyleConfig {
 	 * @default false
 	 */
 	useAttribute?: boolean;
+	bulletedList?: [string];
+	numberedList?: [string];
 }
