@@ -139,4 +139,6 @@ export interface ListPropertiesStyleConfig {
 	 * @default false
 	 */
 	useAttribute?: boolean;
+	bulletedList?: string[];
+	numberedList?: string[];
 }

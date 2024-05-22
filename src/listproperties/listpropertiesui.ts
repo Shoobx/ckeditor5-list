@@ -65,7 +65,7 @@ export default class ListPropertiesUI extends Plugin {
 		// Note: When this plugin does not register the "bulletedList" dropdown due to properties configuration,
 		// a simple button will be still registered under the same name by ListUI as a fallback. This should happen
 		// in most editor configuration because the List plugin automatically requires ListUI.
-		if ( propertiesConfig.styles ) {
+		if ( (propertiesConfig.styles as any)?.bulletedList?.length > 1 ) {
 			const styleDefinitions = [
 				{
 					label: t( 'Toggle the disc list style' ),
@@ -85,7 +85,7 @@ export default class ListPropertiesUI extends Plugin {
 					type: 'square',
 					icon: listStyleSquareIcon
 				}
-			];
+			].filter(item => (propertiesConfig?.styles as any)?.bulletedList?.includes(item.type));
 			const buttonLabel = t( 'Bulleted List' );
 			const styleGridAriaLabel = t( 'Bulleted list styles toolbar' );
 			const commandName = 'bulletedList';
@@ -114,7 +114,7 @@ export default class ListPropertiesUI extends Plugin {
 		// Note: When this plugin does not register the "numberedList" dropdown due to properties configuration,
 		// a simple button will be still registered under the same name by ListUI as a fallback. This should happen
 		// in most editor configuration because the List plugin automatically requires ListUI.
-		if ( propertiesConfig.styles || propertiesConfig.startIndex || propertiesConfig.reversed ) {
+		if ( (propertiesConfig.styles as any)?.numberedList?.length > 1 || propertiesConfig.startIndex || propertiesConfig.reversed ) {
 			const styleDefinitions = [
 				{
 					label: t( 'Toggle the decimal list style' ),
@@ -152,7 +152,7 @@ export default class ListPropertiesUI extends Plugin {
 					type: 'upper-latin',
 					icon: listStyleUpperLatinIcon
 				}
-			];
+			].filter(item => (propertiesConfig?.styles as any)?.numberedList?.includes(item.type));
 			const buttonLabel = t( 'Numbered List' );
 			const styleGridAriaLabel = t( 'Numbered list styles toolbar' );
 			const commandName = 'numberedList';
