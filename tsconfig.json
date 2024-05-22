@@ -1,23 +1,8 @@
 {
-  "compilerOptions": {
-  	"lib": [
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "noImplicitAny": true,
-    "noImplicitOverride": true,
-    "strict": true,
-    "module": "es6",
-    "target": "es2019",
-    "allowJs": true,
-    "moduleResolution": "node",
-    "skipLibCheck": true,
-    "sourceMap": false,
-    "declaration": true
-  },
+	"extends": "../../tsconfig.release.json",
 	"include": [
 		"src",
-		"typings"
+		"../../typings"
 	],
 	"exclude": [
 		"tests"
